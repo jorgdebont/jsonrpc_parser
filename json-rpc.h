@@ -47,7 +47,7 @@ struct tuple
 };
 
 typedef void (*FunctionCallback)();
-struct tuple *decode_json_rpc(char *json_string);
+void decode_json_rpc(char *json_string, struct tuple *tup);
 void encode_json_rpc(struct tuple *json_tuple, char *jsonString);
 void json_rpc_handler(call_t *json_call);
 void call_to_string(call_t *json_call, char *json_string);
