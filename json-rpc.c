@@ -174,13 +174,9 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 					ERROR_METHOD
 				#endif // USING_PRINTF
 			}
-			else if(tup->a==JSON_RPC_CALL)
+			else if((tup->a==JSON_RPC_CALL) ||(tup->a==JSON_RPC_RESPONSE))
 			{
 				tup->id= atoi(json_string+jsmn_tokens[index+1].start);
-			}
-			else if(tup->a==JSON_RPC_RESPONSE)
-			{
-				tup->id = atoi(json_string+jsmn_tokens[index+1].start);
 			}
 			index++;
 		}
