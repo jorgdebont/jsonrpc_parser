@@ -79,21 +79,20 @@ void call_to_string(call_t *json_call, char *json_string)
 
     strcat(json_string, "\"params\": [");
     strcpy(temp_string, json_call->params);
-    str_token = strtok(temp_string, ",");
+    str_token = strtok(temp_string, ", ");
     if(str_token != NULL)
     {
         strcat(json_string, "\"");
         strcat(json_string, str_token);
         strcat(json_string, "\"");
-        str_token = strtok(NULL, ",");
+        str_token = strtok(NULL, ", ");
     }
     while(str_token != NULL)
     {
-        strcat(json_string, ", ");
-        strcat(json_string, "\"");
+        strcat(json_string, ", \"");
         strcat(json_string, str_token);
         strcat(json_string, "\"");
-        str_token = strtok(NULL, ",");
+        str_token = strtok(NULL, ", ");
     }
     strcat(json_string, "]");
     return;
