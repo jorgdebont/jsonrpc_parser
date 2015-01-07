@@ -154,12 +154,12 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 			else if(tup->a==JSON_RPC_CALL)
 			{
 				strncpy(temp_string, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-				str_token = strtok(temp_string, "[\" ");
+				str_token = strtok(temp_string, "[\"] ");
 				while(str_token != NULL)
 				{
-					strcat()
+					strcat(tup->call.params, str_token);
+					str_token = strtok(NULL, "[\"] ");
 				}
-				strcpy(tup->call.params, )
 				printf("%s \n", tup->call.params);
 			}
 			index++;
