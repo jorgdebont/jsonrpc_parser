@@ -111,6 +111,7 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     char			temp_string[100];
     char			*str_token;
 
+
 	tup->a = JSON_RPC_NOT_ASSIGNED;
 	jsmn_init(&temp_jsmn_parser);
 	length = jsmn_parse(&temp_jsmn_parser, json_string, strlen(json_string), jsmn_tokens, sizeof(jsmn_tokens)/sizeof(jsmn_tokens[0]));
@@ -160,7 +161,6 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 					strcat(tup->call.params, str_token);
 					str_token = strtok(NULL, "[\"] ");
 				}
-				printf("%s \n", tup->call.params);
 			}
 			index++;
 		}
