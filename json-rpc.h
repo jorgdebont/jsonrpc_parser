@@ -15,6 +15,14 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef USING_CONTIKI
+MEMB(tuples, struct tuple, 16);
+#include "lib/memb.h"
+#define USING_PRINTF
+#endif // USING_CONTIKI
+
+#define ERROR_METHOD
+
 #define JSON_RPC_NOT_ASSIGNED 	0
 #define JSON_RPC_CALL 			1
 #define JSON_RPC_RESPONSE 		2

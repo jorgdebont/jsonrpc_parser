@@ -8,8 +8,6 @@
 #include "json-rpc.h"
 
 
-
-
 uint8_t jsoneq(const char *json, jsmntok_t *tok, const char *s)
 {
     if (tok->type == JSMN_STRING && (uint8_t) strlen(s) == tok->end - tok->start &&
@@ -32,7 +30,11 @@ void encode_json_rpc(struct tuple *json_tuple, char *json_string)
     strcpy(json_string,"\{\"jsonrpc\": \"2.0\", ");
     switch(json_tuple->a){
         case JSON_RPC_NOT_ASSIGNED:
-            printf("encode_json_rpc(): Error: no response or call");
+			#ifdef USING_PRINTF
+				printf("encode_json_rpc(): Error: no response or call");
+			#else
+				ERROR_METHOD
+            #endif // USING_PRINTF
             break;
         case JSON_RPC_CALL:
             call_to_string(&json_tuple->call, json_string);
@@ -51,7 +53,9 @@ void encode_json_rpc(struct tuple *json_tuple, char *json_string)
 void response_to_string(response_t* json_response, char* json_string)
 {
 #ifdef _DEBUG
+#ifdef USING_PRINTF
     printf("response_to_string(): encoding json_string");
+#endif // USING_PRINTF
 #endif // _DEBUG
     strcat(json_string, "\"result\": ");
     strcat(json_string, json_response->result);
@@ -63,8 +67,10 @@ void call_to_string(call_t *json_call, char *json_string)
     char *str_token;
     char temp_string[256];
 #ifdef _DEBUG
+#ifdef USING_PRINTF
     printf("call_to_string(): encoding json_string");
     printf("call_to_string(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
+#endif // USING_PRINTF
 #endif // _DEBUG
     strcat(json_string, "\"method\": ");
     strcat(json_string, "\"");
@@ -96,15 +102,20 @@ void call_to_string(call_t *json_call, char *json_string)
 struct tuple *decode_json_rpc_(char *json_string)
 {
 #ifdef _DEBUG
+#ifdef USING_PRINTF
     printf("decode_json_rpc(): Message: Decoding json string\n\r");
+#endif // USING_PRINTF
 #endif // _DEBUG
 
     uint16_t	    length, index;
     struct tuple	*tup;
     jsmn_parser		temp_jsmn_parser;
     jsmntok_t		jsmn_tokens[50];
-
+#ifdef USING_CONTIKI
+	tup = memb_alloc(&tuples)
+#else
     tup = malloc(sizeof(struct tuple));
+#endif // USING_CONTIKI
     if(tup != NULL)
     {
         tup->a = JSON_RPC_NOT_ASSIGNED;
@@ -133,11 +144,19 @@ struct tuple *decode_json_rpc_(char *json_string)
             {
                 if(tup->a==JSON_RPC_NOT_ASSIGNED)
                 {
-                    printf("decode_json_rpc(): Error: JSON_RPC is not assigned \n\r");
+					#ifdef USING_PRINTF
+						printf("decode_json_rpc(): Error: JSON_RPC is not assigned \n\r");
+					#else
+						ERROR_METHOD
+					#endif // USING_PRINTF
                 }
                 else if(tup->a==JSON_RPC_RESPONSE)
                 {
-                    printf("decode_json_rpc(): Error: JSON_RPC is a response, therefore it can't have parameters \n\r");
+					#ifdef USING_PRINTF
+						printf("decode_json_rpc(): Error: JSON_RPC is a response, therefore it can't have parameters \n\r");
+					#else
+						ERROR_METHOD
+					#endif // USING_PRINTF
                 }
                 else if(tup->a==JSON_RPC_CALL)
                 {
@@ -149,8 +168,12 @@ struct tuple *decode_json_rpc_(char *json_string)
             {
                 if(tup->a==JSON_RPC_NOT_ASSIGNED)
                 {
-                    printf("decode_json_rpc(): Error: JSON_RPC is not assigned \n\r");
-                }
+					#ifdef USING_PRINTF
+						printf("decode_json_rpc(): Error: JSON_RPC is not assigned \n\r");
+					#else
+						ERROR_METHOD
+					#endif // USING_PRINTF
+				}
                 else if(tup->a==JSON_RPC_CALL)
                 {
                     tup->id= atoi(json_string+jsmn_tokens[index+1].start);
@@ -165,7 +188,11 @@ struct tuple *decode_json_rpc_(char *json_string)
     }
     else
     {
-        printf("decode_json_rpc(): Error: failed to allocate mem\n\r");
+		#ifdef USING_PRINTF
+			printf("decode_json_rpc(): Error: failed to allocate mem\n\r");
+		#else
+			ERROR_METHOD
+		#endif // USING_PRINTF
     }
     return tup;
 }
