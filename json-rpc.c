@@ -31,7 +31,7 @@ void encode_json_rpc(struct tuple *json_tuple, char *json_string)
     switch(json_tuple->a){
         case JSON_RPC_NOT_ASSIGNED:
 			#ifdef USING_PRINTF
-				printf("encode_json_rpc(): Error: no response or call");
+				printf("encode_json_rpc(): Error: no response or call\n\r");
 			#else
 				ERROR_METHOD
             #endif // USING_PRINTF
@@ -54,7 +54,7 @@ void response_to_string(response_t* json_response, char* json_string)
 {
 #ifdef _DEBUG
 #ifdef USING_PRINTF
-    printf("response_to_string(): encoding json_string");
+    printf("response_to_string(): encoding json_string\n\r");
 #endif // USING_PRINTF
 #endif // _DEBUG
     strcat(json_string, "\"result\": ");
@@ -68,7 +68,7 @@ void call_to_string(call_t *json_call, char *json_string)
     char temp_string[256];
 #ifdef _DEBUG
 #ifdef USING_PRINTF
-    printf("call_to_string(): encoding json_string");
+    printf("call_to_string(): encoding json_string\n\r");
     printf("call_to_string(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
 #endif // USING_PRINTF
 #endif // _DEBUG
