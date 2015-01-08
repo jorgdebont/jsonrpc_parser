@@ -183,4 +183,3 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 	}
     return;
 }
-
