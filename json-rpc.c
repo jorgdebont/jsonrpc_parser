@@ -26,7 +26,8 @@ void json_rpc_handler(call_t* json_call)
 
 void encode_json_rpc(struct tuple *json_tuple, char *json_string)
 {
-    char temp[7];
+    //char temp[7];
+    char buffer[50];
     strcpy(json_string,"\{\"jsonrpc\": \"2.0\", ");
     switch(json_tuple->a)
     {
@@ -44,10 +45,12 @@ void encode_json_rpc(struct tuple *json_tuple, char *json_string)
         response_to_string(&json_tuple->response, json_string);
         break;
     }
-    custom_itoa(json_tuple->id, temp);
+    sprintf(buffer, " , \"id\": \"%d\"}",json_tuple->id);
+    strcat(json_string, buffer);
+    /*custom_itoa(json_tuple->id, temp);
     strcat(json_string, " , \"id\": \"");
     strcat(json_string, temp);
-    strcat(json_string, "\"}");
+    strcat(json_string, "\"}");*/
     return;
 }
 
@@ -67,31 +70,38 @@ void call_to_string(call_t *json_call, char *json_string)
 {
     char *str_token = malloc(sizeof(char)*50);
     char temp_string[256];
+    char buffer[100];
 #ifdef _DEBUG
 #ifdef USING_PRINTF
     printf("call_to_string(): encoding json_string\n\r");
     printf("call_to_string(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
 #endif // USING_PRINTF
 #endif // _DEBUG
-    strcat(json_string, "\"method\": \"");
+	sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
+	strcat(json_string, buffer);
+    /*strcat(json_string, "\"method\": \"");
     strcat(json_string, json_call->method);
     strcat(json_string, "\", ");
 
-    strcat(json_string, "\"params\": [");
+    strcat(json_string, "\"params\": [");*/
     strcpy(temp_string, json_call->params);
     str_token = strtok(temp_string, ", ");
     if(str_token != NULL)
     {
-        strcat(json_string, "\"");
+		sprintf(buffer, "\"%s\"", str_token);
+		strcat(json_string, buffer);
+        /*strcat(json_string, "\"");
         strcat(json_string, str_token);
-        strcat(json_string, "\"");
+        strcat(json_string, "\"");*/
         str_token = strtok(NULL, ", ");
     }
     while(str_token != NULL)
     {
-        strcat(json_string, ", \"");
+		sprintf(buffer, ", \"%s\"", str_token);
+		strcat(json_string, buffer);
+       /* strcat(json_string, ", \"");
         strcat(json_string, str_token);
-        strcat(json_string, "\"");
+        strcat(json_string, "\"");*/
         str_token = strtok(NULL, ", ");
     }
     strcat(json_string, "]");
