@@ -72,20 +72,20 @@ void call_to_string(call_t *json_call, char *json_string)
     printf("call_to_string(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
 #endif // USING_PRINTF
 #endif // _DEBUG
-	sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
-	strcat(json_string, buffer);
+    sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
+    strcat(json_string, buffer);
     strcpy(temp_string, json_call->params);
     str_token = strtok(temp_string, ", ");
     if(str_token != NULL)
     {
-		sprintf(buffer, "\"%s\"", str_token);
-		strcat(json_string, buffer);
+        sprintf(buffer, "\"%s\"", str_token);
+        strcat(json_string, buffer);
         str_token = strtok(NULL, ", ");
     }
     while(str_token != NULL)
     {
-		sprintf(buffer, ", \"%s\"", str_token);
-		strcat(json_string, buffer);
+        sprintf(buffer, ", \"%s\"", str_token);
+        strcat(json_string, buffer);
         str_token = strtok(NULL, ", ");
     }
     strcat(json_string, "]");
@@ -108,7 +108,7 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     char			*str_token = malloc(sizeof(char)*50);
     uint8_t			jsonrpc_found = FALSE;
 
-	strcpy(tup->call.params, "");
+    strcpy(tup->call.params, "");
     tup->a = JSON_RPC_NOT_ASSIGNED;
     jsmn_init(&temp_jsmn_parser);
     length = jsmn_parse(&temp_jsmn_parser, json_string, strlen(json_string), jsmn_tokens, sizeof(jsmn_tokens)/sizeof(jsmn_tokens[0]));
@@ -117,27 +117,27 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     {
         if((jsonrpc_found == FALSE) &&(jsoneq(json_string, &jsmn_tokens[index], "jsonrpc") == 0))
         {
-			jsonrpc_found = TRUE;
+            jsonrpc_found = TRUE;
             index++;
         }
         else if(tup->a == JSON_RPC_NOT_ASSIGNED)
         {
-			if(jsoneq(json_string, &jsmn_tokens[index], "method") == 0)
-			{
-				tup->a = JSON_RPC_CALL;
-				strncpy(tup->call.method, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-				index++;
-			}
-			else if(jsoneq(json_string, &jsmn_tokens[index], "result") == 0)
-			{
-				tup->a = JSON_RPC_RESPONSE;
-				strncpy(tup->response.result, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-				index++;
-			}
-		}
+            if(jsoneq(json_string, &jsmn_tokens[index], "method") == 0)
+            {
+                tup->a = JSON_RPC_CALL;
+                strncpy(tup->call.method, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
+                index++;
+            }
+            else if(jsoneq(json_string, &jsmn_tokens[index], "result") == 0)
+            {
+                tup->a = JSON_RPC_RESPONSE;
+                strncpy(tup->response.result, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
+                index++;
+            }
+        }
         else if(jsoneq(json_string, &jsmn_tokens[index], "params") == 0)
         {
-           if(tup->a==JSON_RPC_CALL)
+            if(tup->a==JSON_RPC_CALL)
             {
                 strncpy(temp_string, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
                 str_token = strtok(temp_string, "[\"] ");
@@ -189,37 +189,37 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 
 void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint8_t amount_of_parameters)
 {
-	uint8_t index;
-	char *str_token = malloc(sizeof(char)*50);
-	char *temp_params = malloc(sizeof(char)*256);
-	strcpy(temp_params, json_tuple->call.params);
-	str_token = strtok(temp_params, "[\"] ");
-	if(str_token == NULL)
-	{
-	#ifdef USING_PRINTF
-		printf("get_array_from_tuple(): Error: amount_of_parameters not right")
-	#else
-		ERROR_METHOD
-	#endif // USING_PRINTF
-		return;
-	}
-	for(index = 0; index < amount_of_parameters; index++)
-	{
-		strncpy(output_array[index], str_token, 50);
-		printf("output token: %s", output_array[index]);
-		str_token = strtok(NULL, "[\"] ");
-		if(str_token == NULL)
-		{
-		#ifdef USING_PRINTF
-			printf("get_array_from_tuple(): Error: amount_of_parameters not right")
-		#else
-			ERROR_METHOD
-		#endif // USING_PRINTF
-			break;
-		}
-	}
-	free(temp_params);
-	free(str_token);
+    uint8_t index;
+    char *str_token = malloc(sizeof(char)*50);
+    char *temp_params = malloc(sizeof(char)*256);
+    strcpy(temp_params, json_tuple->call.params);
+    str_token = strtok(temp_params, "[\"] ");
+    if(str_token == NULL)
+    {
+#ifdef USING_PRINTF
+        printf("get_array_from_tuple(): Error: amount_of_parameters not right")
+#else
+        ERROR_METHOD
+#endif // USING_PRINTF
+        return;
+    }
+    for(index = 0; index < amount_of_parameters; index++)
+    {
+        strncpy(output_array[index], str_token, 50);
+        printf("output token: %s", output_array[index]);
+        str_token = strtok(NULL, "[\"] ");
+        if(str_token == NULL)
+        {
+#ifdef USING_PRINTF
+            printf("get_array_from_tuple(): Error: amount_of_parameters not right")
+#else
+            ERROR_METHOD
+#endif // USING_PRINTF
+            break;
+        }
+    }
+    free(temp_params);
+    free(str_token);
 }
 
 
