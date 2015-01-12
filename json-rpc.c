@@ -104,10 +104,10 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     uint16_t	    length, index;
     jsmn_parser		temp_jsmn_parser;
     jsmntok_t		jsmn_tokens[50];
-    char			temp_string[100];
+    char			*temp_string = malloc(sizeof(char)*256);
     char			*str_token = malloc(sizeof(char)*50);
 
-
+	strcpy(tup->call.params, "");
     tup->a = JSON_RPC_NOT_ASSIGNED;
     jsmn_init(&temp_jsmn_parser);
     length = jsmn_parse(&temp_jsmn_parser, json_string, strlen(json_string), jsmn_tokens, sizeof(jsmn_tokens)/sizeof(jsmn_tokens[0]));
@@ -178,6 +178,7 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
         }
     }
     free(str_token);
+    free(temp_string);
     return;
 }
 
