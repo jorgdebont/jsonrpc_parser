@@ -201,6 +201,8 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
+		free(temp_params);
+		free(str_token);
         return;
     }
     for(index = 0; index < amount_of_parameters; index++)
