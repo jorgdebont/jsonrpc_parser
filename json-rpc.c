@@ -106,6 +106,7 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     jsmntok_t		jsmn_tokens[50];
     char			*temp_string = malloc(sizeof(char)*256);
     char			*str_token = malloc(sizeof(char)*50);
+    uint8_t			jsonrpc_found = FALSE;
 
 	strcpy(tup->call.params, "");
     tup->a = JSON_RPC_NOT_ASSIGNED;
@@ -114,25 +115,39 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 
     for(index = 0; index < length; index++)
     {
-        if(jsoneq(json_string, &jsmn_tokens[index], "jsonrpc") == 0)
+        if((jsonrpc_found == FALSE) &&(jsoneq(json_string, &jsmn_tokens[index], "jsonrpc") == 0))
         {
+			jsonrpc_found = TRUE;
             index++;
         }
-        else if(jsoneq(json_string, &jsmn_tokens[index], "method") == 0)
+        else if(tup->a == JSON_RPC_NOT_ASSIGNED)
         {
-            tup->a = JSON_RPC_CALL;
-            strncpy(tup->call.method, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-            index++;
-        }
-        else if(jsoneq(json_string, &jsmn_tokens[index], "result") == 0)
-        {
-            tup->a = JSON_RPC_RESPONSE;
-            strncpy(tup->response.result, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-            index++;
-        }
+			if(jsoneq(json_string, &jsmn_tokens[index], "method") == 0)
+			{
+				tup->a = JSON_RPC_CALL;
+				strncpy(tup->call.method, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
+				index++;
+			}
+			else if(jsoneq(json_string, &jsmn_tokens[index], "result") == 0)
+			{
+				tup->a = JSON_RPC_RESPONSE;
+				strncpy(tup->response.result, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
+				index++;
+			}
+		}
         else if(jsoneq(json_string, &jsmn_tokens[index], "params") == 0)
         {
-            if(tup->a==JSON_RPC_NOT_ASSIGNED)
+           if(tup->a==JSON_RPC_CALL)
+            {
+                strncpy(temp_string, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
+                str_token = strtok(temp_string, "[\"] ");
+                while(str_token != NULL)
+                {
+                    strcat(tup->call.params, str_token);
+                    str_token = strtok(NULL, "[\"] ");
+                }
+            }
+            else if(tup->a==JSON_RPC_NOT_ASSIGNED)
             {
 #ifdef USING_PRINTF
                 printf("decode_json_rpc(): Error: JSON_RPC is not assigned \n\r");
@@ -147,16 +162,6 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 #else
                 ERROR_METHOD
 #endif // USING_PRINTF
-            }
-            else if(tup->a==JSON_RPC_CALL)
-            {
-                strncpy(temp_string, json_string+jsmn_tokens[index+1].start, (jsmn_tokens[index+1].end - jsmn_tokens[index+1].start));
-                str_token = strtok(temp_string, "[\"] ");
-                while(str_token != NULL)
-                {
-                    strcat(tup->call.params, str_token);
-                    str_token = strtok(NULL, "[\"] ");
-                }
             }
             index++;
         }
