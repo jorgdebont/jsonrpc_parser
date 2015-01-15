@@ -1,10 +1,3 @@
-/*
- * json-rpc.c
- *
- *  Created on: Dec 15, 2014
- *      Author: tackticaldude, jazula
- */
-
 #include "json-rpc.h"
 
 
@@ -56,22 +49,32 @@ void response_to_string(response_t* json_response, char* json_string)
     printf("response_to_string(): encoding json_string\n\r");
 #endif // USING_PRINTF
 #endif // _DEBUG
-    strcat(json_string, "\"result\": ");
-    strcat(json_string, json_response->result);
+	char buffer[100];
+	sprintf(buffer, "\"result\": \"%s\"", json_response->result);
+    strcat(json_string, buffer);
     return;
 }
 
 void call_to_string(call_t *json_call, char *json_string)
 {
-    char *str_token = malloc(sizeof(char)*50);
-    char temp_string[256];
-    char buffer[100];
 #ifdef _DEBUG
 #ifdef USING_PRINTF
     printf("call_to_string(): encoding json_string\n\r");
     printf("call_to_string(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
 #endif // USING_PRINTF
 #endif // _DEBUG
+    char *str_token = malloc(sizeof(char)*50);
+    if(str_token == NULL)
+    {
+#ifdef USING_PRINTF
+        printf("call_to_string(): Error: Failed to allocate memory");
+#else
+        ERROR_METHOD
+#endif // USING_PRINTF
+		return;
+    }
+    char temp_string[256];
+    char buffer[100];
     sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
     strcat(json_string, buffer);
     strcpy(temp_string, json_call->params);
@@ -104,9 +107,21 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     uint16_t	    length, index;
     jsmn_parser		temp_jsmn_parser;
     jsmntok_t		jsmn_tokens[50];
+    uint8_t			jsonrpc_found = FALSE;
     char			*temp_string = malloc(sizeof(char)*256);
     char			*str_token = malloc(sizeof(char)*50);
-    uint8_t			jsonrpc_found = FALSE;
+
+	if((str_token == NULL) || (temp_string == NULL))
+    {
+#ifdef USING_PRINTF
+        printf("decode_json_rpc(): Error: Failed to allocate memory");
+#else
+        ERROR_METHOD
+#endif // USING_PRINTF
+		if(str_token != NULL) 			free(str_token);
+		else if(temp_string != NULL) 	free(temp_string);
+		return;
+    }
 
     strcpy(tup->call.params, "");
     tup->a = JSON_RPC_NOT_ASSIGNED;
@@ -192,12 +207,23 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
     uint8_t index;
     char *str_token = malloc(sizeof(char)*50);
     char *temp_params = malloc(sizeof(char)*256);
+    if((str_token == NULL) || (temp_params == NULL))
+    {
+#ifdef USING_PRINTF
+        printf("get_array_from_tuple(): Error: Failed to allocate memory");
+#else
+        ERROR_METHOD
+#endif // USING_PRINTF
+		if(str_token != NULL) 			free(str_token);
+		else if(temp_params != NULL) 	free(temp_params);
+		return;
+    }
     strcpy(temp_params, json_tuple->call.params);
     str_token = strtok(temp_params, "[\"] ");
     if(str_token == NULL)
     {
 #ifdef USING_PRINTF
-        printf("get_array_from_tuple(): Error: amount_of_parameters not right")
+        printf("get_array_from_tuple(): Error: amount_of_parameters not right");
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
@@ -213,7 +239,7 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
         if(str_token == NULL)
         {
 #ifdef USING_PRINTF
-            printf("get_array_from_tuple(): Error: amount_of_parameters not right")
+            printf("get_array_from_tuple(): Error: amount_of_parameters not right");
 #else
             ERROR_METHOD
 #endif // USING_PRINTF
