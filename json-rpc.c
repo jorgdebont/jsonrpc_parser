@@ -204,6 +204,11 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 
 void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint8_t amount_of_parameters)
 {
+#ifdef _DEBUG
+#ifdef USING_PRINTF
+    printf("get_array_from_tuple(): Message: getting array from json_tuple params\n\r");
+#endif // USING_PRINTF
+#endif // _DEBUG
     uint8_t index;
     char *str_token = malloc(sizeof(char)*50);
     char *temp_params = malloc(sizeof(char)*256);
