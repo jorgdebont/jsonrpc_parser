@@ -1,10 +1,3 @@
-/*
- * json-rpc.h
- *
- *  Created on: Dec 15, 2014
- *      Author: tackticaldude, jazula
- */
-
 #ifndef SRC_JSON_RPC_H_
 #define SRC_JSON_RPC_H_
 
