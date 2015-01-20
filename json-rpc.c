@@ -284,7 +284,7 @@ void call_to_string(call_t *json_call, char *json_string)
     }
     char temp_string[256];
     char buffer[100];
-    strcpy(temp_param, json_call.params_format);
+    strcpy(temp_param, json_call->params_format);
 	param_token = strtok_two(temp_param, "%, ");
 
     sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
