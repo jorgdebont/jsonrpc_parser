@@ -122,6 +122,7 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 		else if(temp_string != NULL) 	free(temp_string);
 		return;
     }
+    if(tup->a == JSON_RPC_CALL) strcpy(tup->call.params, "");
 
     tup->a = JSON_RPC_NOT_ASSIGNED;
     jsmn_init(&temp_jsmn_parser);
@@ -254,6 +255,13 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
     free(str_token);
 }
 
+char *strtok_two(char *s, const char *delim)
+{
+    static char *last;
+
+    return strtok_r(s, delim, &last);
+}
+
 void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 {
 #ifdef _DEBUG
@@ -262,25 +270,22 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
     printf("call_to_string_V2(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
 #endif // USING_PRINTF
 #endif // _DEBUG
-    char *str_token = malloc(sizeof(char)*50);
+    char *str_token;
     char *temp_param = malloc(sizeof(char)*strlen(params));
-    char *param_token = malloc(sizeof(char)*5);
-    if((str_token == NULL) || (temp_param == NULL) || (param_token == NULL))
+    char *param_token;
+    if(temp_param == NULL)
     {
 #ifdef USING_PRINTF
         printf("call_to_string_V2(): Error: Failed to allocate memory");
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
-		free(str_token);
-		free(temp_param);
-		free(param_token);
 		return;
     }
     char temp_string[256];
     char buffer[100];
     strcpy(temp_param, params);
-    str
+	param_token = strtok_two(temp_param, "%, ");
 
     sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
     strcat(json_string, buffer);
@@ -289,7 +294,7 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 
     if(str_token != NULL)
     {
-		if(strcmp(temp_param, "s"))
+		if(strcmp(param_token, "s"))
 		{
 			sprintf(buffer, "\"%s\"", str_token);
 		}
@@ -299,18 +304,18 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 		}
         strcat(json_string, buffer);
         str_token = strtok(NULL, ", ");
+        param_token = strtok_two(NULL, "%, ");
     }
     while(str_token != NULL)
     {
         sprintf(buffer, ", \"%s\"", str_token);
         strcat(json_string, buffer);
         str_token = strtok(NULL, ", ");
+        param_token = strtok_two(NULL, "%, ");
     }
     strcat(json_string, "]");
 
-    free(str_token);
     free(temp_param);
-  	free(param_token);
     return;
 }
 

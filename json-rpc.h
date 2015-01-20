@@ -45,5 +45,6 @@ void response_to_string(response_t *json_response, char *json_string);
 void call_to_string(call_t *json_call, char *json_string);
 void decode_json_rpc(char *json_string, struct tuple *tup);
 void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint8_t amount_of_parameters);
+void call_to_string_V2(call_t *json_call, char *json_string, char *params);
 
 #endif /* SRC_JSON_RPC_H_ */
