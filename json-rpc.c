@@ -210,8 +210,8 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
 #endif // _DEBUG
     uint8_t index;
     char *str_token = malloc(sizeof(char)*50);
-    char *temp_params = malloc(sizeof(char)*256);
-    if((str_token == NULL) || (temp_params == NULL))
+    char *temp_result = malloc(sizeof(char)*256);
+    if((str_token == NULL) || (temp_result == NULL))
     {
 #ifdef USING_PRINTF
         printf("get_array_from_tuple(): Error: Failed to allocate memory");
@@ -219,11 +219,11 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
         ERROR_METHOD
 #endif // USING_PRINTF
 		if(str_token != NULL) 			free(str_token);
-		else if(temp_params != NULL) 	free(temp_params);
+		else if(temp_result != NULL) 	free(temp_result);
 		return;
     }
-    strcpy(temp_params, json_tuple->call.params);
-    str_token = strtok(temp_params, "[\"] ");
+    strcpy(temp_result, json_tuple->response.result);
+    str_token = strtok(temp_result, "[\"] ");
     if(str_token == NULL)
     {
 #ifdef USING_PRINTF
@@ -231,7 +231,7 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
-		free(temp_params);
+		free(temp_result);
 		free(str_token);
         return;
     }
@@ -250,7 +250,7 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
             break;
         }
     }
-    free(temp_params);
+    free(temp_result);
     free(str_token);
 }
 
@@ -264,6 +264,7 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 #endif // _DEBUG
     char *str_token = malloc(sizeof(char)*50);
     char *temp_param = malloc(sizeof(char)*strlen(params));
+    char *param_token = malloc(sizeof(char)*5);
     if((str_token == NULL) || (temp_param == NULL) || (param_token == NULL))
     {
 #ifdef USING_PRINTF
@@ -273,9 +274,9 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 #endif // USING_PRINTF
 		free(str_token);
 		free(temp_param);
+		free(param_token);
 		return;
     }
-    char temp_param[5];
     char temp_string[256];
     char buffer[100];
     strcpy(temp_param, params);
@@ -306,8 +307,10 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
         str_token = strtok(NULL, ", ");
     }
     strcat(json_string, "]");
+
     free(str_token);
     free(temp_param);
+  	free(param_token);
     return;
 }
 
