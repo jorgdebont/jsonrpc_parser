@@ -294,7 +294,7 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
 
     if(str_token != NULL)
     {
-		if(strcmp(param_token, "s"))
+		if(strcmp(param_token, "s") == 0)
 		{
 			sprintf(buffer, "\"%s\"", str_token);
 		}
