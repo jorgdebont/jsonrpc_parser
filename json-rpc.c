@@ -55,7 +55,7 @@ void response_to_string(response_t* json_response, char* json_string)
     return;
 }
 
-void call_to_string(call_t *json_call, char *json_string)
+/*void call_to_string(call_t *json_call, char *json_string)
 {
 #ifdef _DEBUG
 #ifdef USING_PRINTF
@@ -94,7 +94,7 @@ void call_to_string(call_t *json_call, char *json_string)
     strcat(json_string, "]");
     free(str_token);
     return;
-}
+}*/
 
 void decode_json_rpc(char *json_string, struct tuple *tup)
 {
@@ -262,7 +262,7 @@ char *strtok_two(char *s, const char *delim)
     return strtok_r(s, delim, &last);
 }
 
-void call_to_string_V2(call_t *json_call, char *json_string, char *params)
+void call_to_string(call_t *json_call, char *json_string)
 {
 #ifdef _DEBUG
 #ifdef USING_PRINTF
@@ -284,7 +284,7 @@ void call_to_string_V2(call_t *json_call, char *json_string, char *params)
     }
     char temp_string[256];
     char buffer[100];
-    strcpy(temp_param, params);
+    strcpy(temp_param, json_call.params_format);
 	param_token = strtok_two(temp_param, "%, ");
 
     sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
