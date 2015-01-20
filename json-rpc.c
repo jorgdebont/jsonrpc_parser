@@ -123,7 +123,6 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
 		return;
     }
 
-    strcpy(tup->call.params, "");
     tup->a = JSON_RPC_NOT_ASSIGNED;
     jsmn_init(&temp_jsmn_parser);
     length = jsmn_parse(&temp_jsmn_parser, json_string, strlen(json_string), jsmn_tokens, sizeof(jsmn_tokens)/sizeof(jsmn_tokens[0]));
@@ -255,6 +254,62 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
     free(str_token);
 }
 
+void call_to_string_V2(call_t *json_call, char *json_string, char *params)
+{
+#ifdef _DEBUG
+#ifdef USING_PRINTF
+    printf("call_to_string_V2(): encoding json_string\n\r");
+    printf("call_to_string_V2(): method:%s, params:%s, id:%d \n\r", json_call->method, json_call->params, json_call->id);
+#endif // USING_PRINTF
+#endif // _DEBUG
+    char *str_token = malloc(sizeof(char)*50);
+    char *temp_param = malloc(sizeof(char)*strlen(params));
+    if((str_token == NULL) || (temp_param == NULL) || (param_token == NULL))
+    {
+#ifdef USING_PRINTF
+        printf("call_to_string_V2(): Error: Failed to allocate memory");
+#else
+        ERROR_METHOD
+#endif // USING_PRINTF
+		free(str_token);
+		free(temp_param);
+		return;
+    }
+    char temp_param[5];
+    char temp_string[256];
+    char buffer[100];
+    strcpy(temp_param, params);
+    str
+
+    sprintf(buffer,"\"method\": \"%s\", \"params\": [", json_call->method);
+    strcat(json_string, buffer);
+    strcpy(temp_string, json_call->params);
+    str_token = strtok(temp_string, ", ");
+
+    if(str_token != NULL)
+    {
+		if(strcmp(temp_param, "s"))
+		{
+			sprintf(buffer, "\"%s\"", str_token);
+		}
+		else
+		{
+			sprintf(buffer, "%s", str_token);
+		}
+        strcat(json_string, buffer);
+        str_token = strtok(NULL, ", ");
+    }
+    while(str_token != NULL)
+    {
+        sprintf(buffer, ", \"%s\"", str_token);
+        strcat(json_string, buffer);
+        str_token = strtok(NULL, ", ");
+    }
+    strcat(json_string, "]");
+    free(str_token);
+    free(temp_param);
+    return;
+}
 
 
 
