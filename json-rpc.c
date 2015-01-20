@@ -11,7 +11,6 @@ uint8_t jsoneq(const char *json, jsmntok_t *tok, const char *s)
     return -1;
 }
 
-
 void json_rpc_handler(call_t* json_call)
 {
 
@@ -109,17 +108,15 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
     jsmntok_t		jsmn_tokens[50];
     uint8_t			jsonrpc_found = FALSE;
     char			*temp_string = malloc(sizeof(char)*256);
-    char			*str_token = malloc(sizeof(char)*50);
+    char			*str_token;
 
-	if((str_token == NULL) || (temp_string == NULL))
+	if(temp_string == NULL)
     {
 #ifdef USING_PRINTF
         printf("decode_json_rpc(): Error: Failed to allocate memory");
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
-		if(str_token != NULL) 			free(str_token);
-		else if(temp_string != NULL) 	free(temp_string);
 		return;
     }
     if(tup->a == JSON_RPC_CALL) strcpy(tup->call.params, "");
@@ -197,7 +194,6 @@ void decode_json_rpc(char *json_string, struct tuple *tup)
             index++;
         }
     }
-    free(str_token);
     free(temp_string);
     return;
 }
@@ -210,17 +206,15 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
 #endif // USING_PRINTF
 #endif // _DEBUG
     uint8_t index;
-    char *str_token = malloc(sizeof(char)*50);
+    char *str_token;
     char *temp_result = malloc(sizeof(char)*256);
-    if((str_token == NULL) || (temp_result == NULL))
+    if(temp_result == NULL)
     {
 #ifdef USING_PRINTF
         printf("get_array_from_tuple(): Error: Failed to allocate memory");
 #else
         ERROR_METHOD
 #endif // USING_PRINTF
-		if(str_token != NULL) 			free(str_token);
-		else if(temp_result != NULL) 	free(temp_result);
 		return;
     }
     strcpy(temp_result, json_tuple->response.result);
@@ -252,7 +246,6 @@ void get_array_from_tuple(struct tuple *json_tuple, char output_array[][50],uint
         }
     }
     free(temp_result);
-    free(str_token);
 }
 
 char *strtok_two(char *s, const char *delim)
@@ -271,7 +264,7 @@ void call_to_string(call_t *json_call, char *json_string)
 #endif // USING_PRINTF
 #endif // _DEBUG
     char *str_token;
-    char *temp_param = malloc(sizeof(char)*strlen(params));
+    char *temp_param = malloc(sizeof(char)*strlen(json_call->params_format));
     char *param_token;
     if(temp_param == NULL)
     {
