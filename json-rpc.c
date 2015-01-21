@@ -301,7 +301,14 @@ void call_to_string(call_t *json_call, char *json_string)
     }
     while(str_token != NULL)
     {
-        sprintf(buffer, ", \"%s\"", str_token);
+        if(strcmp(param_token, "s") == 0)
+		{
+			sprintf(buffer, ", \"%s\"", str_token);
+		}
+		else
+		{
+			sprintf(buffer, ", %s", str_token);
+		}
         strcat(json_string, buffer);
         str_token = strtok(NULL, ", ");
         param_token = strtok_two(NULL, "%, ");
